@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version'
+        description: "Version"
         required: true
-        default: 'minor'
+        default: "minor"
         type: choice
         options:
           - patch
@@ -17,7 +17,7 @@ jobs:
   release:
     name: Release
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v3.3.0
         with:
           node-version: 16
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: yarn install
