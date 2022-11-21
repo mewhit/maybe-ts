@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
-  "type": "module",
   "repository": "https://github.com/mewhit/maybe-ts.git",
   "author": "Mike Whittom",
   "license": "MIT",
