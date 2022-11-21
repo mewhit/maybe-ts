@@ -9,7 +9,7 @@ export default [
     plugins: [esbuild()],
     output: [
       {
-        file: `dist/bundle.js`,
+        file: `dist/index.js`,
         format: "cjs",
         sourcemap: true,
       },
@@ -19,7 +19,7 @@ export default [
     input,
     plugins: [dts()],
     output: {
-      file: `dist/bundle.d.ts`,
+      file: `dist/index.d.ts`,
       format: "es",
     },
   },
