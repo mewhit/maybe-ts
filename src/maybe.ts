@@ -111,3 +111,16 @@ export const isJust: <A>(rd: Maybe<A>) => rd is Just<A> = _isJust;
 const _isNothing = (ma: Maybe<unknown>): ma is Nothing => ma._tag === "Nothing";
 
 export const isNothing: (rd: Maybe<unknown>) => rd is Nothing = _isNothing;
+
+const Maybe = {
+  isNothing,
+  isJust,
+  fold,
+  withDefault,
+  map,
+  map2,
+  just,
+  nothing,
+};
+
+export default Maybe;

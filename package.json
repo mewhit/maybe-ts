@@ -4,11 +4,12 @@
   "description": "Functor Maybe in Typescript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "repository": "https://github.com/mewhit/maybe-ts.git",
   "author": "Mike Whittom",
   "license": "MIT",
   "scripts": {
-    "build": "rollup --config rollup.config.ts --configPlugin swc3",
+    "build": "rollup --config rollup.config.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -17,9 +18,11 @@
     "@swc/jest": "0.2.23",
     "@tsconfig/node16": "1.0.3",
     "@types/jest": "29.1.2",
+    "esbuild": "^0.15.15",
     "jest": "29.1.2",
-    "rollup": "2.79.1",
+    "rollup": "^3.3.0",
     "rollup-plugin-dts": "4.2.3",
+    "rollup-plugin-esbuild": "^5.0.0",
     "rollup-plugin-swc3": "0.6.0",
     "typescript": "4.8.4"
   },
