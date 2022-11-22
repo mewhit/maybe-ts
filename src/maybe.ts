@@ -213,17 +213,19 @@ const _isNothing = (ma: Maybe<unknown>): ma is Nothing => ma._tag === "Nothing";
 export const isNothing: (rd: Maybe<unknown>) => rd is Nothing = _isNothing;
 
 const Maybe = {
-  isNothing,
-  isJust,
+  andThen,
+  andThenAsync,
   fold,
   foldAsync,
+  isJust,
+  isNothing,
+  just,
+  map,
+  map2,
+  mapAsync,
+  nothing,
   withDefault,
   withDefaultAsync,
-  map,
-  mapAsync,
-  map2,
-  just,
-  nothing,
 };
 
 export default Maybe;
