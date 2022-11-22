@@ -1,6 +1,6 @@
 {
   "name": "@mewhit/maybe-ts",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Functor Maybe in Typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
