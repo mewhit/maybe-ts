@@ -43,10 +43,11 @@ export const map =
 /** Same as Map but work with async whenJust
  **/
 export const mapAsync =
-  <A, R>(whenJust: (a: A) => Promise<R>) =>
-  async (rd: Maybe<A>): Promise<Maybe<R>> => {
-    if (isJust(rd)) {
-      const t = await whenJust(rd.value);
+  <A, R>(whenJust: (a: A) => R | Promise<R>) =>
+  async (rd: Maybe<A> | Promise<Maybe<A>>): Promise<Maybe<R>> => {
+    const r = await Promise.resolve(rd);
+    if (isJust(r)) {
+      const t = await whenJust(r.value);
       return Promise.resolve(just(t));
     }
     return Promise.resolve(nothing());
