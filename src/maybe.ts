@@ -40,6 +40,18 @@ export const map =
     return rd;
   };
 
+/** Same as Map but work with async whenJust
+ **/
+export const mapAsync =
+  <A, R>(whenJust: (a: A) => Promise<R>) =>
+  async (rd: Maybe<A>): Promise<Maybe<R>> => {
+    if (isJust(rd)) {
+      const t = await whenJust(rd.value);
+      return Promise.resolve(just(t));
+    }
+    return Promise.resolve(nothing());
+  };
+
 /** Combine two maybe sources with the given function. The maybe will succeed when (and if) both sources succeed. If not return de nothing one and if its 2 nothing return the first one.
  * @param whenJust Function to map the succeed value
  * @returns Function thats take the first Maybe
