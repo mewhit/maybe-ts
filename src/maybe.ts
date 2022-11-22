@@ -138,6 +138,41 @@ export const fold =
     return whenJust(rd.value);
   };
 
+/** Extract data for each state but async
+    * @param whenJust Function when is state is Just.
+    * @param whenNothing Function when is state is Nothing.
+    * @returns Function thats take the maybe
+    * @param maybe The maybe to extract
+    * @returns The right maybe of the current state
+    * @example fold(
+                   (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
+                   (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
+             )(notAsked()) === <p> Not Asked yet </p>
+    * @example fold(
+                   (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
+                   (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
+             )(loading()) === <Loader />,
+    * @example fold(
+                   (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
+                   (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
+             )(just([items1])) === <> {items.map(\i -> <Item item={i}/>} </>
+    * @example fold(
+                   (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
+                   (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
+             )(nothing(anyNothingor)) === <p> Something bad happen! Call the 911 </p> 
+   
+    */
+export const foldAsync =
+  <A, R>(
+    whenJust: (a: A) => R | Promise<R>,
+    whenNothing: () => R | Promise<R>
+  ) =>
+  async (rd: Maybe<A> | Promise<Maybe<A>>): Promise<R> => {
+    const r = await rd;
+    if (isNothing(r)) return Promise.resolve(whenNothing());
+    return Promise.resolve(whenJust(r.value));
+  };
+
 const _isJust = <A>(ma: Maybe<A>): ma is Just<A> => ma._tag === "Just";
 
 export const isJust: <A>(rd: Maybe<A>) => rd is Just<A> = _isJust;
@@ -150,6 +185,7 @@ const Maybe = {
   isNothing,
   isJust,
   fold,
+  foldAsync,
   withDefault,
   withDefaultAsync,
   map,

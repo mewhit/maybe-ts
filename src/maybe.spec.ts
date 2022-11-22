@@ -7,6 +7,7 @@ import {
   withDefault,
   mapAsync,
   withDefaultAsync,
+  foldAsync,
 } from "./maybe";
 
 describe("RemoteData", () => {
@@ -70,7 +71,7 @@ describe("RemoteData", () => {
       expect(
         fold(
           (value) => value,
-          () => 1
+          () => "none"
         )(remoteData)
       ).toBe(expectedValue);
     });
@@ -79,6 +80,40 @@ describe("RemoteData", () => {
       const remoteData = nothing();
       expect(
         fold(
+          () => 1,
+          () => 0
+        )(remoteData)
+      ).toBe(0);
+    });
+  });
+
+  describe("foldAsync", () => {
+    it("should take async parameters", async () => {
+      const expectedValue = "Youpi";
+      const remoteData = Promise.resolve(just("Youpi"));
+      expect(
+        await foldAsync(
+          (value: string) => Promise.resolve(value),
+          () => Promise.resolve("")
+        )(remoteData)
+      ).toBe(expectedValue);
+    });
+
+    it("should return when Just when isSuccess", async () => {
+      const expectedValue = "Youpi";
+      const remoteData = just("Youpi");
+      expect(
+        await foldAsync(
+          (value) => value,
+          () => 1
+        )(remoteData)
+      ).toBe(expectedValue);
+    });
+
+    it("should return whenNothing when isNothing", async () => {
+      const remoteData = nothing();
+      expect(
+        await foldAsync(
           () => 1,
           () => 0
         )(remoteData)
