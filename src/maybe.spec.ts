@@ -8,17 +8,40 @@ import {
   mapAsync,
   withDefaultAsync,
   foldAsync,
+  andThen,
+  andThenAsync,
 } from "./maybe";
 
 describe("RemoteData", () => {
+  describe("andThen", () => {
+    const toJustNumber = (x: string) => just(+x);
+    const toNothing = (x: string) => nothing();
+    it("should return Success when Just", () =>
+      expect(andThen(toJustNumber)(just("10"))).toEqual(just(10)));
+    it("should return Nothing when Nothing", () =>
+      expect(andThen(toNothing)(nothing())).toEqual(nothing()));
+  });
+
+  describe("andThenAsync", () => {
+    const toJustNumber = (x: string) => just(+x);
+    const toJustNumberAsync = (x: string) => Promise.resolve(just(+x));
+    const toNothing = (x: string) => nothing();
+
+    it("should take promise as parameters", async () =>
+      expect(
+        await andThenAsync(toJustNumberAsync)(Promise.resolve(just("10")))
+      ).toEqual(just(10)));
+    it("should return Success when Just", async () =>
+      expect(await andThenAsync(toJustNumber)(just("10"))).toEqual(just(10)));
+    it("should return Nothing when Nothing", async () =>
+      expect(await andThenAsync(toNothing)(nothing())).toEqual(nothing()));
+  });
   describe("map", () => {
     const toNumber = (x: string) => +x;
-    describe("when Just", () =>
-      it("should return Success", () =>
-        expect(map(toNumber)(just("10"))).toEqual(just(10))));
-    describe("when Nothing", () =>
-      it("should return Nothing", () =>
-        expect(map(toNumber)(nothing())).toEqual(nothing())));
+    it("should return Success when Just", () =>
+      expect(map(toNumber)(just("10"))).toEqual(just(10)));
+    it("should return Nothing when Nothing", () =>
+      expect(map(toNumber)(nothing())).toEqual(nothing()));
   });
 
   describe("mapAsync", () => {

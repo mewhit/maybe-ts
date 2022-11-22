@@ -25,12 +25,43 @@ export const nothing = <A>(): Maybe<A> => ({
 type Just<A> = { value: A; _tag: "Just" };
 type Nothing = { _tag: "Nothing" };
 
+/** andThen a function into the Just value.
+ * @param whenJust Function to map the succeed value
+ * @returns Function thats take the maybe
+ * @param maybe The maybe to map
+ * @returns The return new states ,if succeed state return mapped state
+ * @example andThen(item => nothing()))(nothing()) === nothing()
+ * @example andThen(item => just(+item))(just("10")) === just(10)
+ */
+export const andThen =
+  <A, R>(whenJust: (a: A) => Maybe<R>) =>
+  (rd: Maybe<A>) => {
+    if (isJust(rd)) return whenJust(rd.value);
+    return rd;
+  };
+
+/** andThen a function into the Just value.
+ * @param whenJust Function to map the succeed value
+ * @returns Function thats take the maybe
+ * @param maybe The maybe to map
+ * @returns The return new states ,if succeed state return mapped state
+ * @example andThen(item => nothing()))(nothing()) === nothing()
+ * @example andThen(item => just(+item))(just("10")) === just(10)
+ */
+export const andThenAsync =
+  <A, R>(whenJust: (a: A) => Maybe<R> | Promise<Maybe<R>>) =>
+  async (rd: Maybe<A> | Promise<Maybe<A>>): Promise<Maybe<R>> => {
+    const r = await rd;
+    if (isJust(r)) return Promise.resolve(whenJust(r.value));
+    return Promise.resolve(nothing());
+  };
+
 /** Map a function into the Just value.
  * @param whenJust Function to map the succeed value
  * @returns Function thats take the maybe
  * @param maybe The maybe to map
  * @returns The return new states ,if succeed state return mapped state
- * @example map(item => items.filter(predicate)))(loading()) === loading()
+ * @example map(item => items.filter(predicate)))(nothing()) === nothing()
  * @example map(item => +item)(just("10")) === just(10)
  */
 export const map =
@@ -45,7 +76,7 @@ export const map =
  * @returns Function thats take the maybe
  * @param maybe The maybe to map
  * @returns The return new states ,if succeed state return mapped state
- * @example map(item => items.filter(predicate)))(loading()) === loading()
+ * @example map(item => items.filter(predicate)))(nothing()) === nothing()
  * @example map(item => +item)(just("10")) === just(10)
  */
 export const mapAsync =
@@ -66,9 +97,9 @@ export const mapAsync =
  * @returns Function thats take the remote second Maybe
  * @param maybe2 Second Maybe
  * @returns The return new states ,if succeed state return mapped state
- * @example map2((item1, item2) => item1 + item2)(loading())(just(10)) === loading()
+ * @example map2((item1, item2) => item1 + item2)(nothing())(just(10)) === nothing()
  * @example map2((item1, item2) => item1 + item2)(just(10))(just(10)) === just(20)
- * @example map2((item1, item2) => item1 + item2)(notAsked())(loading()) === notAsked()
+ * @example map2((item1, item2) => item1 + item2)(notAsked())(nothing()) === notAsked()
  */
 export const map2 =
   <A, B, R>(whenJust: (a: A) => (b: B) => R) =>
@@ -84,7 +115,7 @@ export const map2 =
  * @returns Function thats take the Maybe
  * @param maybe Maybe
  * @returns The default value or the just value
- * @example withDefault("Not Just Maybe")(loading()) === "Not Just Maybe"
+ * @example withDefault("Not Just Maybe")(nothing()) === "Not Just Maybe"
  * @example withDefault("Not Just Maybe")(just("10")) === just("10")
  */
 export const withDefault =
@@ -97,7 +128,7 @@ export const withDefault =
  * @returns Function thats take the Maybe
  * @param maybe Maybe
  * @returns The default value or the just value
- * @example withDefault("Not Just Maybe")(loading()) === "Not Just Maybe"
+ * @example withDefault("Not Just Maybe")(nothing()) === "Not Just Maybe"
  * @example withDefault("Not Just Maybe")(just("10")) === just("10")
  */
 export const withDefaultAsync =
@@ -120,7 +151,7 @@ export const withDefaultAsync =
     * @example fold(
                    (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
                    (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
-             )(loading()) === <Loader />,
+             )(nothing()) === <Loader />,
     * @example fold(
                    (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
                    (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
@@ -151,7 +182,7 @@ export const fold =
     * @example fold(
                    (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
                    (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
-             )(loading()) === <Loader />,
+             )(nothing()) === <Loader />,
     * @example fold(
                    (items: List<Item>) => <> {items.map(\i -> <Item item={i}/>} </>,
                    (_ : AxiosNothingor) => <p> Something bad happen! Call the 911 </p> 
