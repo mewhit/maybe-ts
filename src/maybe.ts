@@ -130,6 +130,7 @@ const Maybe = {
   fold,
   withDefault,
   map,
+  mapAsync,
   map2,
   just,
   nothing,
