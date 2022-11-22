@@ -40,8 +40,14 @@ export const map =
     return rd;
   };
 
-/** Same as Map but work with async whenJust
- **/
+/** MapAsync same as Map. Map a function into the Just value
+ * @param whenJust Function to map the succeed value
+ * @returns Function thats take the maybe
+ * @param maybe The maybe to map
+ * @returns The return new states ,if succeed state return mapped state
+ * @example map(item => items.filter(predicate)))(loading()) === loading()
+ * @example map(item => +item)(just("10")) === just(10)
+ */
 export const mapAsync =
   <A, R>(whenJust: (a: A) => R | Promise<R>) =>
   async (rd: Maybe<A> | Promise<Maybe<A>>): Promise<Maybe<R>> => {
@@ -85,6 +91,21 @@ export const withDefault =
   <A>(defaultValue: A) =>
   (rd: Maybe<A>) =>
     isJust(rd) ? rd.value : defaultValue;
+
+/** Return the Just value, or the default.
+ * @param defaultValue The value returned if is not Just
+ * @returns Function thats take the Maybe
+ * @param maybe Maybe
+ * @returns The default value or the just value
+ * @example withDefault("Not Just Maybe")(loading()) === "Not Just Maybe"
+ * @example withDefault("Not Just Maybe")(just("10")) === just("10")
+ */
+export const withDefaultAsync =
+  <A>(defaultValue: A | Promise<A>) =>
+  async (rd: Maybe<A> | Promise<Maybe<A>>): Promise<A> => {
+    const r = await Promise.resolve(rd);
+    return Promise.resolve(isJust(r) ? r.value : defaultValue);
+  };
 
 /** Extract data for each state.
     * @param whenJust Function when is state is Just.
@@ -130,6 +151,7 @@ const Maybe = {
   isJust,
   fold,
   withDefault,
+  withDefaultAsync,
   map,
   mapAsync,
   map2,

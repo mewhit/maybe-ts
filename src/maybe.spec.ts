@@ -1,4 +1,13 @@
-import { fold, just, nothing, map, map2, withDefault, mapAsync } from "./maybe";
+import {
+  fold,
+  just,
+  nothing,
+  map,
+  map2,
+  withDefault,
+  mapAsync,
+  withDefaultAsync,
+} from "./maybe";
 
 describe("RemoteData", () => {
   describe("map", () => {
@@ -36,12 +45,23 @@ describe("RemoteData", () => {
         expect(map2(add)(nothing())(nothing())).toEqual(nothing())));
   });
   describe("withDefault", () => {
-    describe("when Just", () =>
-      it("should return Success value", () =>
-        expect(withDefault("10")(just("20"))).toEqual("20")));
-    describe("when Nothing", () =>
-      it("should return defaultValue", () =>
-        expect(withDefault("10")(nothing())).toEqual("10")));
+    it("should return Success value when Just", () =>
+      expect(withDefault("10")(just("20"))).toEqual("20"));
+    it("should return defaultValue when Nothing", () =>
+      expect(withDefault("10")(nothing())).toEqual("10"));
+  });
+
+  describe("withDefaultAsync", () => {
+    it("should take promise as parameters", async () =>
+      expect(
+        await withDefaultAsync(Promise.resolve("10"))(
+          Promise.resolve(just("10"))
+        )
+      ).toEqual("10"));
+    it("should take non-promise as parameters", async () =>
+      expect(await withDefaultAsync("10")(just("20"))).toEqual("20"));
+    it("should return defaultValue when Nothing", async () =>
+      expect(await withDefaultAsync("10")(nothing())).toEqual("10"));
   });
   describe("fold", () => {
     it("should return when Just when isSuccess", () => {
